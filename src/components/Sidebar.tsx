@@ -1,4 +1,4 @@
-import { keyframes, useTheme } from "@emotion/react";
+import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import {
   AccessTimeFilledRounded,
@@ -9,7 +9,6 @@ import {
   DeleteForeverRounded,
   DownloadDoneRounded,
   Favorite,
-  FavoriteRounded,
   FiberManualRecord,
   GetAppRounded,
   GitHub,
@@ -37,11 +36,8 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CustomDialogTitle, LogoutDialog, SettingsDialog } from ".";
-import bmcLogoLight from "../assets/bmc-logo-light.svg";
-import bmcLogo from "../assets/bmc-logo.svg";
 import { defaultUser } from "../constants/defaultUser";
 import { UserContext } from "../contexts/UserContext";
-import { fetchBMCInfo } from "../services/bmcApi";
 import { fetchGitHubInfo } from "../services/githubApi";
 import { DialogBtn, UserAvatar, pulseAnimation, reduceMotion, ring } from "../styles";
 import { ColorPalette } from "../theme/themeConfig";
@@ -65,9 +61,6 @@ export const ProfileSidebar = () => {
   const [lastUpdate, setLastUpdate] = useState<string | null>(null);
   const [issuesCount, setIssuesCount] = useState<number | null>(null);
 
-  const [bmcSupporters, setBmcSupporters] = useState<number | null>(null);
-
-  const theme = useTheme();
   const n = useNavigate();
 
   useEffect(() => {
@@ -78,18 +71,6 @@ export const ProfileSidebar = () => {
       setIssuesCount(repoData.open_issues_count);
     };
 
-    const fetchBMC: () => Promise<void> = async () => {
-      // Fetch data from the Buy Me a Coffee API
-      const { supportersCount } = await fetchBMCInfo();
-      // In case BMC api fails
-      if (supportersCount > 0) {
-        setBmcSupporters(supportersCount);
-      } else {
-        console.error("No BMC supporters found.");
-      }
-    };
-
-    fetchBMC();
     fetchRepoInfo();
   }, []);
 
@@ -346,22 +327,6 @@ export const ProfileSidebar = () => {
           </StyledMenuItem>
         </MenuLink>
 
-        {/* <MenuLink to="https://www.buymeacoffee.com/TahmisZubair">
-          <StyledMenuItem className="bmcMenu">
-            <BmcIcon className="bmc-icon" src={theme.darkmode ? bmcLogoLight : bmcLogo} /> &nbsp;
-            Buy me a coffee{" "}
-            {bmcSupporters && (
-              <Tooltip title={`${bmcSupporters} supporters on Buy me a coffee`}>
-                <MenuLabel clr="#f93c58">
-                  <span>
-                    <FavoriteRounded style={{ fontSize: "16px" }} />
-                    {bmcSupporters}
-                  </span>
-                </MenuLabel>
-              </Tooltip>
-            )}
-          </StyledMenuItem>
-        </MenuLink> */}
 
         <StyledDivider />
 
@@ -724,12 +689,6 @@ const LogoText = styled.h2`
   & span {
     color: #7764e8;
   }
-`;
-
-const BmcIcon = styled.img`
-  width: 1em;
-  height: 1em;
-  font-size: 1.5rem;
 `;
 
 const ProfileOptionsBottom = styled.div`
